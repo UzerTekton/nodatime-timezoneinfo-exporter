@@ -4,13 +4,15 @@ by Uzer Tekton
 ## Description
 This tool generates **TimeZoneInfo serialized strings** using NodaTime TZDB.
 
-For use in `TimeZoneInfo.FromSerializedString(String)` in a Unity script for example.
+For use in `TimeZoneInfo.FromSerializedString(String)` in a Unity script.
 
 The point is by generating our own serialized strings (and embedding into a project), we can ensure:
 
 - It uses latest IANA time zone data (from NodaTime's embedded TZDB source).
 
 - It does NOT rely on Windows built-in timezone data, therefore the project is cross-platform and portable.
+
+This program was meant for Unity scripting (in Udon for VRChat to be precise) and is tested to work in VRChat SDK 3.8.1,  but I don't know if the generated strings will work for any other purposes.
 
 ## Prerequisites
 Requires:
