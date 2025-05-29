@@ -12,7 +12,7 @@ The point is by generating our own serialized strings (and embedding into a proj
 
 - It does NOT rely on Windows built-in timezone data, therefore the project is cross-platform and portable.
 
-This program was meant for Unity scripting (in Udon for VRChat to be precise) and is tested to work in VRChat SDK 3.8.1,  but I don't know if the generated strings will work for any other purposes.
+This program was meant for generating serialized strings for use in Unity scripting (in Udon for VRChat to be precise) and is tested to work in VRChat SDK 3.8.1,  but I don't know if the generated strings will work for any other purposes.
 
 ## Prerequisites
 Requires:
