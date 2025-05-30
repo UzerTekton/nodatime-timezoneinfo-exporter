@@ -17,7 +17,7 @@ class TimeZoneInfoExporter
         int serializedCount = 0;
 
         using var writer = new StreamWriter(outputPath);
-        // Write header block with example serialized string for PST
+        // Write header block
         writer.WriteLine("# TimeZoneInfo Serialized Strings");
         writer.WriteLine($"# Exported with TimeZoneInfoExporter on {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}");
         writer.WriteLine($"# TZDB version used: {TzdbDateTimeZoneSource.Default.TzdbVersion}");
