@@ -19,8 +19,10 @@ class TimeZoneInfoExporter
         using var writer = new StreamWriter(outputPath);
         // Write header block with example serialized string for PST
         writer.WriteLine("# TimeZoneInfo Serialized Strings");
-        writer.WriteLine("# Exported with TimeZoneInfoExporter");
-        writer.WriteLine("# Contains serialized time zones from 2000 to 2100.");
+        writer.WriteLine($"# Exported with TimeZoneInfoExporter on {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}");
+        writer.WriteLine($"# TZDB version used: {TzdbDateTimeZoneSource.Default.TzdbVersion}");
+        writer.WriteLine($"# Contains serialized time zones from {startYear} to {endYear}.");
+        writer.WriteLine("# Usage:");
         writer.WriteLine("# Deserialize with TimeZoneInfo.FromSerializedString.");
         writer.WriteLine("# Example:");
         writer.WriteLine("# TimeZoneInfo.FromSerializedString(\"" + "<PASTE THE STRING HERE>" + "\")");
@@ -105,7 +107,7 @@ class TimeZoneInfoExporter
                     
                         var extendedRule = TimeZoneInfo.AdjustmentRule.CreateAdjustmentRule(
                             lastRule.DateStart, // 1 Jan of the previous year
-                            candidateRule.DateEnd, // 31 Dec of the current year, or forever if the rule is recurring past end year
+                            (rules.Count > 1) ? candidateRule.DateEnd : DateTime.MaxValue.Date, // 31 Dec of the current year, or forever if one single rule is recurring past end year
                             lastRule.DaylightDelta,
                             lastRule.DaylightTransitionStart,
                             lastRule.DaylightTransitionEnd);
