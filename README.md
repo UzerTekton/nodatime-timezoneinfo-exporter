@@ -4,17 +4,25 @@ by Uzer Tekton
 ## Description
 This tool generates **TimeZoneInfo serialized strings** using NodaTime TZDB.
 
-For use in `TimeZoneInfo.FromSerializedString(String)` in a Unity script.
+For use in `TimeZoneInfo.FromSerializedString(String)` in a Unity script for example.
 
-The point is by generating our own serialized strings (and embedding into a project), we can ensure:
+The point is by generating our own serialized strings (and embedding into a Unity project), we can ensure:
 
-- It uses latest IANA time zone data (from NodaTime's embedded TZDB source).
+  - The game uses latest IANA time zone data (from NodaTime's embedded TZDB source).
 
-- It does NOT rely on Windows built-in timezone data, therefore the project is cross-platform and portable.
+  - The game does not rely on the device built-in timezone data (which can be outdated) nor rely on the OS-dependant `TimeZoneInfo.FindSystemTimeZoneById()` (which requires different `id` for non-Windows), therefore the project is cross-platform and portable.
 
-This program was meant for generating serialized strings for use in Unity scripting (in Udon for VRChat to be precise) and is tested to work in VRChat SDK 3.8.1,  but I don't know if the generated strings will work for any other purposes.
+## Features and Limitations
+
+- By default it only checks for rules from the year 2000 to 2100. However you can set to a longer period if you want, but it will increase the string size of some time zones.
+
+  - This will not affect you if your time zone does not have DST, or has a constant DST rule (it will be condensed into one rule).
+
+- It does not generate with `displayName` `standardDisplayName` `daylightDisplayName`.
+
 
 ## Prerequisites
+
 Requires:
 
 - Some way to compile the cs file e.g. .NET SDK
@@ -29,24 +37,41 @@ Requires:
   - In Windows cmd, type `dotnet add package NodaTime` to install/update the package.
     - (Optional) To specify a version: `dotnet add package NodaTime --version x.y.z`
   
-3. Easiest and quickest way is to save the cs file somewhere and type `dotnet run` in Windows cmd at the location. It should create the txt file in the same folder.
+3. Use dotnet to run the script. (Plenty of guides out there teaching you how to run your first dotnet)
+
+4. It should create the txt file in the same folder.
 
 ## Usage
 
-- Find the time zone you want inside this file, copy its entire line into your Unity script as a string. This is the "serialized string".
+- Find the time zone you want inside this file, copy the serialized string into your Unity script as a string.
 
 - Use `TimeZoneInfo.FromSerializedString(serializedString)` to get the TimeZoneInfo object.
 
 - Use the TimeZoneInfo in e.g. `TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo)`
 
 - Example:
-  ```
-   // This is copied from one of the lines inside the text file
-  string serialized = "Custom TimeZone,3,Custom TimeZone,-06:00:00,-06:00:00,01:00:00,03,8,2:00:00,11,1,2:00:00,,,,,";
+
+  Open the text file, find your time zone, and copy the part without the title.
   
+  ```
+  // DO NOT COPY THIS PART
+  # Europe/London
+  
+  // COPY THIS PART
+  Europe/London;0;Europe/London;Europe/London;Europe/London;[01:01:2000;12:31:2100;60;[0;02:00:00;3;5;0;];[0;02:00:00;10;5;0;];];
+  
+  ```
+  
+  And then paste it in Unity script or where you want to use `TimeZoneInfo.FromSerializedString`:
+  
+  ```
+                       // PASTE HERE as a string
+  string serialized = "Europe/London;0;Europe/London;Europe/London;Europe/London;[01:01:2000;12:31:2100;60;[0;02:00:00;3;5;0;];[0;02:00:00;10;5;0;];];";
+  
+  // Use the string to get your TimeZoneInfo
   TimeZoneInfo tz = TimeZoneInfo.FromSerializedString(serialized);
   
-  // result
+  // And then do conversions with it or whatever you want
   DateTime local = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
   ```
 
