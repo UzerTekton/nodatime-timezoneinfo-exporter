@@ -1,41 +1,54 @@
 # NodaTimeTimeZoneInfoExporter
+
 by Uzer Tekton
 
 ## Description
-This tool generates **TimeZoneInfo serialized strings** using NodaTime TZDB.
+
+This tool generates **TimeZoneInfo serialized strings** using the NodaTime default TZDB which uses the latest IANA time zone data.
+
+## Purpose
 
 For use in `TimeZoneInfo.FromSerializedString(String)` in a Unity script for example.
 
-The point is by generating our own serialized strings (and embedding into a Unity project), we can ensure:
+By generating our own serialized strings (and embedding into a Unity project), we can ensure:
 
-  - The game uses latest IANA time zone data (from NodaTime's embedded TZDB source).
+  - The game uses latest IANA time zone data (from NodaTime's default TZDB source).
 
-  - The game does not rely on the device built-in timezone data (which can be outdated) nor rely on the OS-dependant `TimeZoneInfo.FindSystemTimeZoneById()` (which requires different `id` for non-Windows), therefore the project is cross-platform and portable.
+  - The game does not rely on the device built-in timezone data (which can be outdated) nor rely on the OS-dependant `TimeZoneInfo.FindSystemTimeZoneById()` (which requires a different set of `id`s for non-Windows), therefore the project is cross-platform and portable.
 
-## Features and Limitations
+    - This can be useful if you need the game to run on both PC and Android.
 
-- By default it only checks for rules from the year 2000 to 2100. However you can set to a longer period if you want, but it will increase the string size of some time zones.
+## Features and limitations
 
-  - This will not affect you if your time zone does not have DST, or has a constant DST rule (it will be condensed into one rule).
+- It saves all the serialized string from all time zones into a txt file. By default this is `TimeZoneInfo.txt`.
 
-- It does not generate with `displayName` `standardDisplayName` `daylightDisplayName`.
+  - It also prints the date when the file was generated, and the TZDB version it uses (e.g. should be 2025b as of writing).
+
+- By default it only checks for, and create rules from the year 2000 to 2100 (with exceptions, see below). However you can manually set (variables `startYear` and `endYear`) to a longer period if you want.
+
+  - This means, for some time zones that have inconsistent rules year-by-year based on number of weeks and weekdays, the rules will continue only up to `endYear`, and effectively become UTC forever afterwards. Increasing `endYear` will increase the string size of these time zones.
+
+  - However this will not affect time zones that do not have any DST rules, or have a single consistent DST rule, which is set to last effectively forever into the future (but not the past). (Microsoft docs says `DateTime.MaxValue.Date` means no end date, even though the text file reads `9999`.)
+
+- During conversion at `CreateCustomTimeZone()` it does not include the correct names for `displayName`, `standardDisplayName`, `daylightDisplayName`.
+
+  - Therefore if you need to read the name from the TimeZoneInfo, only `id` is available.
 
 
 ## Prerequisites
 
-Requires:
+- Some way to run a `.cs` file e.g. .NET SDK
 
-- Some way to compile the cs file e.g. .NET SDK
-
-- NodaTime NuGet package
+- Latest NodaTime NuGet package
 
 
 ## How to run for beginner
+
 1. Install .NET SDK
 
-2. Ensure you have the latest IANA TZDB:
+2. Ensure you have the latest IANA TZDB: (This ensures you have the latest IANA time zone data)
+
   - In Windows cmd, type `dotnet add package NodaTime` to install/update the package.
-    - (Optional) To specify a version: `dotnet add package NodaTime --version x.y.z`
   
 3. Use dotnet to run the script. (Plenty of guides out there teaching you how to run your first dotnet)
 
@@ -58,7 +71,7 @@ Requires:
   # Europe/London
   
   // COPY THIS PART
-  Europe/London;0;Europe/London;Europe/London;Europe/London;[01:01:2000;12:31:2100;60;[0;02:00:00;3;5;0;];[0;02:00:00;10;5;0;];];
+  Europe/London;0;Europe/London;Europe/London;Europe/London;[01:01:2000;12:31:9999;60;[0;02:00:00;3;5;0;];[0;02:00:00;10;5;0;];];
   
   ```
   
@@ -66,7 +79,7 @@ Requires:
   
   ```
                        // PASTE HERE as a string
-  string serialized = "Europe/London;0;Europe/London;Europe/London;Europe/London;[01:01:2000;12:31:2100;60;[0;02:00:00;3;5;0;];[0;02:00:00;10;5;0;];];";
+  string serialized = "Europe/London;0;Europe/London;Europe/London;Europe/London;[01:01:2000;12:31:9999;60;[0;02:00:00;3;5;0;];[0;02:00:00;10;5;0;];];";
   
   // Use the string to get your TimeZoneInfo
   TimeZoneInfo tz = TimeZoneInfo.FromSerializedString(serialized);
