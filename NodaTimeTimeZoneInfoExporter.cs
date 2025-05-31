@@ -18,15 +18,10 @@ class TimeZoneInfoExporter
 
         using var writer = new StreamWriter(outputPath);
         // Write header block
-        writer.WriteLine("# TimeZoneInfo Serialized Strings");
-        writer.WriteLine($"# Exported with TimeZoneInfoExporter on {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}");
-        writer.WriteLine($"# TZDB version used: {TzdbDateTimeZoneSource.Default.TzdbVersion}");
-        writer.WriteLine($"# Contains serialized time zones from {startYear} to {endYear}.");
-        writer.WriteLine("# Usage:");
-        writer.WriteLine("# Deserialize with TimeZoneInfo.FromSerializedString.");
-        writer.WriteLine("# Example:");
-        writer.WriteLine("# TimeZoneInfo.FromSerializedString(\"" + "<PASTE THE STRING HERE>" + "\")");
-        writer.WriteLine("# ----------------------------------------");
+        writer.WriteLine("// TimeZoneInfo Serialized Strings");
+        writer.WriteLine($"// Exported with TimeZoneInfoExporter on {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)}");
+        writer.WriteLine($"// TZDB version used: {TzdbDateTimeZoneSource.Default.TzdbVersion}");
+        writer.WriteLine($"// Contains serialized time zones from {startYear} to {endYear}.");
         writer.WriteLine();
 
         foreach (var id in tzdb.Ids)
@@ -36,7 +31,7 @@ class TimeZoneInfoExporter
             try
             {
                 var serialized = SerializeZone(zone, id, startYear, endYear);
-                writer.WriteLine($"# {id}");
+                // writer.WriteLine($"// {id}"); // To avoid matching issues we don't need the id
                 writer.WriteLine(serialized);
                 writer.WriteLine();
                 serializedCount++;
