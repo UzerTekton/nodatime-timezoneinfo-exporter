@@ -31,7 +31,7 @@ class TimeZoneInfoExporter
             try
             {
                 var serialized = SerializeZone(zone, id, startYear, endYear);
-                // writer.WriteLine($"// {id}"); // To avoid matching issues we don't need the id
+                writer.WriteLine($"// {id}");
                 writer.WriteLine(serialized);
                 writer.WriteLine();
                 serializedCount++;
