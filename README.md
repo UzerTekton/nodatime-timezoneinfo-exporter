@@ -68,7 +68,7 @@ By generating our own serialized strings (and embedding into a Unity project), w
   
   ```
   // DO NOT COPY THIS PART
-  # Europe/London
+  // Europe/London
   
   // COPY THIS PART
   Europe/London;0;Europe/London;Europe/London;Europe/London;[01:01:2000;12:31:9999;60;[0;02:00:00;3;5;0;];[0;02:00:00;10;5;0;];];
